@@ -2,6 +2,11 @@ module vlog
 
 import time
 
+// TODO
+// ====
+// - add functionality for creating log files and writing to them
+// - timestamps from files and terminal output should be the same, don't forget to 'sync'
+
 [flag]
 pub enum Severity {
 	debug
@@ -50,7 +55,7 @@ pub fn (l Logger) log(s Severity, content string) {
 		if s == .error {
 			eprintln(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
 		} else {
-			println(create_time_for_log() + ' | ' + s.str() + ' | ' + content) // needs current time, etc...
+			println(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
 		}
 	}
 	
@@ -76,7 +81,7 @@ pub fn (mut l Logger) set_file_path(path string) {
 	// add checks, if path exists
 	l.to_file = true
 	l.log_path = path
-	l.log_file = create_time_for_file_name() + '_log.txt' // add current time
+	l.log_file = create_time_for_file_name() + '_log.txt'
 	// add check if file creation worked
 }
 
