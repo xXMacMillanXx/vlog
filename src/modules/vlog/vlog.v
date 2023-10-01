@@ -1,11 +1,13 @@
 module vlog
 
 import time
+import os
 
 // TODO
 // ====
 // - add functionality for creating log files and writing to them
 // - timestamps from files and terminal output should be the same, don't forget to 'sync'
+// - add to Logger.new() a name parameter, which gets added to the log entry and log file name
 
 [flag]
 pub enum Severity {
@@ -32,6 +34,15 @@ fn (s Severity) str() string {
 	}
 }
 
+struct LoggingError {
+	Error
+	message string
+}
+
+fn (err LoggingError) msg() string {
+	return 'Logging Error: ${err.message}'
+}
+
 struct Logger {
 mut:
 	severity_output Severity
@@ -52,10 +63,15 @@ pub fn Logger.new() Logger {
 pub fn (l Logger) log(s Severity, content string) {
 	if l.disabled { return }
 	if l.severity_output.all(s) {
-		if s == .error {
-			eprintln(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
-		} else {
-			println(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
+		if l.to_terminal {
+			if s == .error {
+				eprintln(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
+			} else {
+				println(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
+			}
+		}
+		if l.to_file {
+			// TODO
 		}
 	}
 	
@@ -77,12 +93,18 @@ pub fn (mut l Logger) reenable() {
 	l.disabled = false
 }
 
-pub fn (mut l Logger) set_file_path(path string) {
-	// add checks, if path exists
-	l.to_file = true
-	l.log_path = path
+pub fn (mut l Logger) set_file_path(path string) ! {
+	if !os.exists(path) {
+		return LoggingError { message: 'The path for the file location does not exist, or might be not accessible: ${path}' }
+	}
+	l.log_path = if path[path.len-1] == `/` { path } else { path + '/' } // Might causes problems on Windows?
 	l.log_file = create_time_for_file_name() + '_log.txt'
-	// add check if file creation worked
+
+	mut f := os.create(l.log_path + l.log_file) or {
+		return LoggingError { message: 'The file couldn\'t be created: ${l.log_path + l.log_file}' }
+	}
+	f.close()
+	l.to_file = true
 }
 
 pub fn (mut l Logger) set_terminal_output(output bool) {
