@@ -7,6 +7,9 @@ fn main() {
 
 	// logger.track_severities(vlog.Severity.normal | vlog.Severity.debug)
 	// logger.disable()
+	
+	// logger.set_file_path('./')!
+	// logger.set_terminal_output(false)
 
 	logger.log(vlog.Severity.debug, 'Value of x is 5.')
 	logger.log(vlog.Severity.normal, 'Things are happening.')

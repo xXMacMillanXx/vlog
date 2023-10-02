@@ -5,8 +5,6 @@ import os
 
 // TODO
 // ====
-// - add functionality for creating log files and writing to them
-// - timestamps from files and terminal output should be the same, don't forget to 'sync'
 // - add to Logger.new() a name parameter, which gets added to the log entry and log file name
 
 [flag]
@@ -63,18 +61,20 @@ pub fn Logger.new() Logger {
 pub fn (l Logger) log(s Severity, content string) {
 	if l.disabled { return }
 	if l.severity_output.all(s) {
+		log_msg := create_time_for_log() + ' | ' + s.str() + ' | ' + content
 		if l.to_terminal {
 			if s == .error {
-				eprintln(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
+				eprintln(log_msg)
 			} else {
-				println(create_time_for_log() + ' | ' + s.str() + ' | ' + content)
+				println(log_msg)
 			}
 		}
 		if l.to_file {
-			// TODO
+			l.append_to_log(log_msg) or {
+				eprintln(create_time_for_log() + ' | Error | Error occurred during writing to log file.')
+			}
 		}
 	}
-	
 }
 
 pub fn (mut l Logger) track_severities(sev Severity) {
@@ -94,10 +94,11 @@ pub fn (mut l Logger) reenable() {
 }
 
 pub fn (mut l Logger) set_file_path(path string) ! {
+	if l.disabled { return }
 	if !os.exists(path) {
 		return LoggingError { message: 'The path for the file location does not exist, or might be not accessible: ${path}' }
 	}
-	l.log_path = if path[path.len-1] == `/` { path } else { path + '/' } // Might causes problems on Windows?
+	l.log_path = path_parse(path)
 	l.log_file = create_time_for_file_name() + '_log.txt'
 
 	mut f := os.create(l.log_path + l.log_file) or {
@@ -111,11 +112,26 @@ pub fn (mut l Logger) set_terminal_output(output bool) {
 	l.to_terminal = output
 }
 
+fn (l Logger) append_to_log(msg string) ! {
+	mut f := os.open_append(l.log_path + l.log_file)!
+	f.writeln(msg)!
+	f.close()
+}
+
+fn path_parse(path string) string {
+	path_sep := $if windows { '\\' } $else { '/' }
+
+	return match path[path.len-1] {
+		`/`, `\\` { path }
+		else { path + path_sep }
+	}
+}
+
 fn create_time_for_file_name() string {
 	x := time.now()
 	return x.year.str() + '${x.month:02}' + '${x.day:02}-${x.hour:02}' + '${x.minute:02}' + '${x.second:02}_${x.nanosecond:09}'
 }
 
 fn create_time_for_log() string {
-	return time.now().get_fmt_str(time.FormatDelimiter.no_delimiter, time.FormatTime.hhmmss24_nano, time.FormatDate.yyyymmdd)
+	return time.now().get_fmt_str(time.FormatDelimiter.hyphen, time.FormatTime.hhmmss24_nano, time.FormatDate.yyyymmdd)
 }
