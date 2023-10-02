@@ -2,7 +2,7 @@
 
 vlog is a module for the V language. It provides simple to use logging capabilities.
 You can specify a severity for your log entries and decide which of those should be logged.
-Currently the module only outputs log entries in the terminal but soon (TM) logging to files will be possible.
+Log entries can be output on the terminal, a log file or both. Currently, everytime the program runs, a new log file gets created, there is no functionality to reuse the same log file, yet.
 
 # Usage
 
@@ -31,4 +31,18 @@ logger.track_severities(vlog.Severity.warning | vlog.Severity.error)
 x := 5
 logger.log(vlog.Severity.debug, 'Value of x: ${x}') // not logged
 logger.log(vlog.Severity.warning, 'This will be logged')
+```
+
+To write to a log file you can use the following.
+
+```v
+module main
+
+import vlog
+
+mut logger := vlog.Logger.new()
+logger.set_file_path('./logs/')
+logger.set_terminal_output(false)
+
+logger.log(vlog.Severity.normal, 'Gets logged to a file, but not to the terminal output.')
 ```
