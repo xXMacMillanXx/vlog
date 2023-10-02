@@ -5,6 +5,7 @@ import os
 
 // TODO
 // ====
+// - folder createn for log path has to be implemented
 // - add to Logger.new() a name parameter, which gets added to the log entry and log file name
 
 [flag]
@@ -101,6 +102,7 @@ pub fn (mut l Logger) set_file_path(path string) ! {
 	l.log_path = path_parse(path)
 	l.log_file = create_time_for_file_name() + '_log.txt'
 
+	// path has to exist, if not, if should be created. currently not existing folders do not get created!!!
 	mut f := os.create(l.log_path + l.log_file) or {
 		return LoggingError { message: 'The file couldn\'t be created: ${l.log_path + l.log_file}' }
 	}
