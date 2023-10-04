@@ -26,11 +26,11 @@ module main
 import vlog
 
 mut logger := vlog.Logger.new()
-logger.track_severities(vlog.Severity.warning | vlog.Severity.error)
+logger.track_severities(.warning | .error)
 
 x := 5
-logger.log(vlog.Severity.debug, 'Value of x: ${x}') // not logged
-logger.log(vlog.Severity.warning, 'This will be logged')
+logger.log(.debug, 'Value of x: ${x}') // not logged
+logger.log(.warning, 'This will be logged')
 ```
 
 To write to a log file you can use the following.
@@ -44,5 +44,5 @@ mut logger := vlog.Logger.new()
 logger.set_file_path('./logs/')!
 logger.set_terminal_output(false)
 
-logger.log(vlog.Severity.normal, 'Gets logged to a file, but not to the terminal output.')
+logger.log(.normal, 'Gets logged to a file, but not to the terminal output.')
 ```
