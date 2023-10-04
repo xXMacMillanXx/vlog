@@ -96,13 +96,13 @@ pub fn (mut l Logger) reenable() {
 
 pub fn (mut l Logger) set_file_path(path string) ! {
 	if l.disabled { return }
-	if !os.exists(path) {
+	os.mkdir_all(path, os.MkdirParams { mode: 0o777 })!
+	if !os.exists(path) { // check is currently useless since the path gets created right before this check
 		return LoggingError { message: 'The path for the file location does not exist, or might be not accessible: ${path}' }
 	}
 	l.log_path = path_parse(path)
 	l.log_file = create_time_for_file_name() + '_log.txt'
 
-	// path has to exist, if not, if should be created. currently not existing folders do not get created!!!
 	mut f := os.create(l.log_path + l.log_file) or {
 		return LoggingError { message: 'The file couldn\'t be created: ${l.log_path + l.log_file}' }
 	}
