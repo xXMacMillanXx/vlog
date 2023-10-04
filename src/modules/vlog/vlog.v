@@ -5,7 +5,6 @@ import os
 
 // TODO
 // ====
-// - folder createn for log path has to be implemented
 // - add to Logger.new() a name parameter, which gets added to the log entry and log file name
 
 [flag]

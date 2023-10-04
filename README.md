@@ -41,7 +41,7 @@ module main
 import vlog
 
 mut logger := vlog.Logger.new()
-logger.set_file_path('./logs/')
+logger.set_file_path('./logs/')!
 logger.set_terminal_output(false)
 
 logger.log(vlog.Severity.normal, 'Gets logged to a file, but not to the terminal output.')
