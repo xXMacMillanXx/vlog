@@ -1,5 +1,10 @@
 # vlog
 
+IMPORTANT!  
+This module is currently depricated, since I found out that V has its own log module.  
+I still might continue working on this module for practice, but probably not to release it as a finished module.  
+If you are looking for a V log module, just use `import log`.
+
 vlog is a module for the V language. It provides simple to use logging capabilities.
 You can specify a severity for your log entries and decide which of those should be logged.
 Log entries can be output on the terminal, a log file or both. Currently, everytime the program runs, a new log file gets created, there is no functionality to reuse the same log file, yet.

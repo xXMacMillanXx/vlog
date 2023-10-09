@@ -1,3 +1,4 @@
+[deprecated: 'V already has a log module. use: import log, instead.']
 module vlog
 
 import time
@@ -5,7 +6,10 @@ import os
 
 // TODO
 // ====
+// OK, just found out V has its own log module (import log). So no need to make a new one, unless for practice.
+//
 // - add to Logger.new() a name parameter, which gets added to the log entry and log file name
+// - let log() add logs to a resource queue which gets written into a file in another thread
 
 [flag]
 pub enum Severity {
@@ -51,6 +55,7 @@ mut:
 	disabled bool
 }
 
+[deprecated: 'V already has a log module. use: import log, instead.'] // added here again, since message isn't show on module import
 pub fn Logger.new() Logger {
 	return Logger {
 		severity_output: .debug | .normal | .warning | .error

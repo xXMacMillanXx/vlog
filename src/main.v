@@ -5,7 +5,7 @@ import vlog
 fn main() {
 	mut logger := vlog.Logger.new()
 
-	logger.track_severities(.normal | .debug)
+	// logger.track_severities(.normal | .debug)
 	// logger.disable()
 	
 	logger.set_file_path('./logs/')!
